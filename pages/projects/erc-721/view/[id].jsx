@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { ethers } from 'ethers';
 import { useRouter } from 'next/router';
 import Form from 'react-bootstrap/Form';
 import Head from 'next/head';
@@ -26,32 +25,38 @@ export default function ViewNFT() {
 
 	const [modalShow, setModalShow] = useState(false);
 
-	useEffect(() => {
-		const fetchData = async () => {
-			try {
-				const { id } = router.query;
-				if (contract && id) {
-					const value = await contract.tokenURI(id);
-					const object = JSON.parse(value);
+	async function fetchContractData() {
+		try {
+			const { id } = router.query;
+			if (contract && id) {
+				const value = await contract.tokenURI(id);
+				const object = JSON.parse(value);
 
-					setName(object.properties.name.description);
-					setDescription(object.properties.description.description);
-					setUrl(object.properties.image.description);
+				setName(object.properties.name.description);
+				setDescription(object.properties.description.description);
+				setUrl(object.properties.image.description);
 
-					setTokenName(await contract.name());
-					setTokenSymbol(await contract.symbol());
+				setTokenName(await contract.name());
+				setTokenSymbol(await contract.symbol());
 
-					const owner = await contract.ownerOf(id);
+				const owner = await contract.ownerOf(id);
 
-					setOwner(owner);
-					setTokenId(id);
-				}
-			} catch (error) {
-				console.error(error);
+				setOwner(owner);
+				setTokenId(id);
 			}
-		};
+		} catch (error) {
+			console.error(error);
+		}
+	}
 
-		fetchData();
+	useEffect(() => {
+		fetchContractData();
+
+		window.ethereum.on('chainChanged', fetchData);
+
+		return () => {
+			window.ethereum.removeListener('chainChanged', fetchData);
+		};
 	}, [router.query, contract]);
 
 	function activateSendNFTModal() {
@@ -117,7 +122,7 @@ export default function ViewNFT() {
 				<Form.Group
 					as={Row}
 					className="mb-3"
-					controlId="formPlaintextPassword"
+					controlId="formPlaintextImage"
 				>
 					<Form.Label column sm="2">
 						Image
@@ -129,7 +134,11 @@ export default function ViewNFT() {
 			</Form>
 			<SendNFTModal
 				show={modalShow}
-				onHide={() => setModalShow(false)}
+				onHide={() => {
+					setModalShow(false);
+					// This is a poor implementation, better to implement an event listener
+					fetchContractData();
+				}}
 				contract={contract}
 				senderAddress={signerAddress}
 				tokenId={tokenId}

@@ -16,75 +16,67 @@ export default function ViewAllNFTs({ user, httpClient }) {
 	const [senderAddress, setSenderAddress] = useState('');
 	const [modalShow, setModalShow] = useState(false);
 
-	useEffect(() => {
-		const fetchData = async () => {
-			try {
-				const name = await httpClient.sendTxAsync(
+	async function fetchContractData() {
+		try {
+			const name = await httpClient.sendTxAsync(
+				process.env.NEXT_PUBLIC_CONTRACT_NAME,
+				parseInt(process.env.NEXT_PUBLIC_CHAIN_ID),
+				'name',
+				[]
+			);
+			const symbol = await httpClient.sendTxAsync(
+				process.env.NEXT_PUBLIC_CONTRACT_NAME,
+				parseInt(process.env.NEXT_PUBLIC_CHAIN_ID),
+				'symbol',
+				[]
+			);
+
+			setTokenName(name.result);
+			setTokenSymbol(symbol.result);
+
+			const totalSupply = await httpClient.sendTxAsync(
+				process.env.NEXT_PUBLIC_CONTRACT_NAME,
+				parseInt(process.env.NEXT_PUBLIC_CHAIN_ID),
+				'totalSupply',
+				[]
+			);
+
+			const arr = [];
+
+			for (let i = 0; i < totalSupply.result; i++) {
+				const rawURI = await httpClient.sendTxAsync(
 					process.env.NEXT_PUBLIC_CONTRACT_NAME,
 					parseInt(process.env.NEXT_PUBLIC_CHAIN_ID),
-					'name',
-					[]
+					'tokenURI',
+					[i]
 				);
-				const symbol = await httpClient.sendTxAsync(
+
+				const owner = await httpClient.sendTxAsync(
 					process.env.NEXT_PUBLIC_CONTRACT_NAME,
 					parseInt(process.env.NEXT_PUBLIC_CHAIN_ID),
-					'symbol',
-					[]
+					'ownerOf',
+					[i]
 				);
 
-				setTokenName(name.result);
-				setTokenSymbol(symbol.result);
-
-				const totalSupply = await httpClient.sendTxAsync(
-					process.env.NEXT_PUBLIC_CONTRACT_NAME,
-					parseInt(process.env.NEXT_PUBLIC_CHAIN_ID),
-					'totalSupply',
-					[]
-				);
-
-				const arr = [];
-
-				for (let i = 0; i < totalSupply.result; i++) {
-					const rawURI = await httpClient.sendTxAsync(
-						process.env.NEXT_PUBLIC_CONTRACT_NAME,
-						parseInt(process.env.NEXT_PUBLIC_CHAIN_ID),
-						'tokenURI',
-						[i]
-					);
-
-					const owner = await httpClient.sendTxAsync(
-						process.env.NEXT_PUBLIC_CONTRACT_NAME,
-						parseInt(process.env.NEXT_PUBLIC_CHAIN_ID),
-						'ownerOf',
-						[i]
-					);
-
-					if (rawURI.result) {
-						const convertedURI = JSON.parse(rawURI.result);
-						arr.push({
-							tokenId: i,
-							name: convertedURI.properties.name.description,
-							owner: owner.result,
-						});
-					}
+				if (rawURI.result) {
+					const convertedURI = JSON.parse(rawURI.result);
+					arr.push({
+						tokenId: i,
+						name: convertedURI.properties.name.description,
+						owner: owner.result,
+					});
 				}
-
-				setSenderAddress(user?.eth_address);
-				setList(arr);
-			} catch (error) {
-				console.error(error);
 			}
-		};
 
-		fetchData();
+			setSenderAddress(user?.eth_address);
+			setList(arr);
+		} catch (error) {
+			console.error(error);
+		}
+	}
 
-		window.ethereum.on('accountsChanged', fetchData);
-		window.ethereum.on('chainChanged', fetchData);
-
-		return () => {
-			window.ethereum.removeListener('accountsChanged', fetchData);
-			window.ethereum.removeListener('chainChanged', fetchData);
-		};
+	useEffect(() => {
+		fetchContractData();
 	}, [user?.eth_address, httpClient]);
 
 	function activateCreateNFTModal() {
@@ -152,7 +144,11 @@ export default function ViewAllNFTs({ user, httpClient }) {
 
 			<MetisCreateNFTModal
 				show={modalShow}
-				onHide={() => setModalShow(false)}
+				onHide={() => {
+					setModalShow(false);
+					// This is a poor implementation, better to implement an event listener
+					fetchContractData();
+				}}
 				httpClient={httpClient}
 				senderAddress={senderAddress}
 			/>

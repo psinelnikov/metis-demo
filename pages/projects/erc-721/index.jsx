@@ -19,37 +19,45 @@ export default function ViewAllNFTs() {
 	const [tokenSymbol, setTokenSymbol] = useState('');
 	const [modalShow, setModalShow] = useState(false);
 
-	useEffect(() => {
-		const fetchData = async () => {
-			try {
-				if (contract) {
-					setTokenName(await contract.name());
-					setTokenSymbol(await contract.symbol());
+	async function fetchContractData() {
+		try {
+			if (contract) {
+				setTokenName(await contract.name());
+				setTokenSymbol(await contract.symbol());
 
-					const totalSupply = await contract.totalSupply();
-					const arr = [];
-					for (let i = 0; i < totalSupply; i++) {
-						const value = await contract.tokenURI(i);
-						const owner = await contract.ownerOf(i);
+				const totalSupply = await contract.totalSupply();
+				const arr = [];
+				for (let i = 0; i < totalSupply; i++) {
+					const value = await contract.tokenURI(i);
+					const owner = await contract.ownerOf(i);
 
-						if (value) {
-							const object = JSON.parse(value);
-							arr.push({
-								tokenId: i,
-								name: object.properties.name.description,
-								owner,
-							});
-						}
+					if (value) {
+						const object = JSON.parse(value);
+						arr.push({
+							tokenId: i,
+							name: object.properties.name.description,
+							owner,
+						});
 					}
-
-					setList(arr);
 				}
-			} catch (error) {
-				console.error(error);
-			}
-		};
 
-		fetchData();
+				setList(arr);
+			}
+		} catch (error) {
+			console.error(error);
+		}
+	}
+
+	useEffect(() => {
+		fetchContractData();
+
+		window.ethereum.on('accountsChanged', fetchContractData);
+		window.ethereum.on('chainChanged', fetchContractData);
+
+		return () => {
+			window.ethereum.removeListener('accountsChanged', fetchContractData);
+			window.ethereum.removeListener('chainChanged', fetchContractData);
+		};
 	}, [contract]);
 
 	function activateCreateNFTModal() {
@@ -111,7 +119,11 @@ export default function ViewAllNFTs() {
 			</Row>
 			<CreateNFTModal
 				show={modalShow}
-				onHide={() => setModalShow(false)}
+				onHide={() => {
+					setModalShow(false);
+					// This is a poor implementation, better to implement an event listener
+					fetchContractData();
+				}}
 				contract={contract}
 				senderAddress={signerAddress}
 			/>

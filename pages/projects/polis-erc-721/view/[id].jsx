@@ -24,59 +24,53 @@ export default function ViewNFT({ user, httpClient }) {
 
 	const [modalShow, setModalShow] = useState(false);
 
-	useEffect(() => {
-		const fetchData = async () => {
-			try {
-				if (query.id) {
-					const value = await httpClient.sendTxAsync(
-						process.env.NEXT_PUBLIC_CONTRACT_NAME,
-						parseInt(process.env.NEXT_PUBLIC_CHAIN_ID),
-						'tokenURI',
-						[parseInt(query.id)]
-					);
-					const object = JSON.parse(value.result);
+	async function fetchContractData() {
+		try {
+			if (query.id) {
+				const value = await httpClient.sendTxAsync(
+					process.env.NEXT_PUBLIC_CONTRACT_NAME,
+					parseInt(process.env.NEXT_PUBLIC_CHAIN_ID),
+					'tokenURI',
+					[parseInt(query.id)]
+				);
+				const object = JSON.parse(value.result);
 
-					setName(object.properties.name.description);
-					setDescription(object.properties.description.description);
-					setUrl(object.properties.image.description);
+				setName(object.properties.name.description);
+				setDescription(object.properties.description.description);
+				setUrl(object.properties.image.description);
 
-					const name = await httpClient.sendTxAsync(
-						process.env.NEXT_PUBLIC_CONTRACT_NAME,
-						parseInt(process.env.NEXT_PUBLIC_CHAIN_ID),
-						'name',
-						[]
-					);
-					const symbol = await httpClient.sendTxAsync(
-						process.env.NEXT_PUBLIC_CONTRACT_NAME,
-						parseInt(process.env.NEXT_PUBLIC_CHAIN_ID),
-						'symbol',
-						[]
-					);
-					const owner = await httpClient.sendTxAsync(
-						process.env.NEXT_PUBLIC_CONTRACT_NAME,
-						parseInt(process.env.NEXT_PUBLIC_CHAIN_ID),
-						'ownerOf',
-						[query.id]
-					);
+				const name = await httpClient.sendTxAsync(
+					process.env.NEXT_PUBLIC_CONTRACT_NAME,
+					parseInt(process.env.NEXT_PUBLIC_CHAIN_ID),
+					'name',
+					[]
+				);
+				const symbol = await httpClient.sendTxAsync(
+					process.env.NEXT_PUBLIC_CONTRACT_NAME,
+					parseInt(process.env.NEXT_PUBLIC_CHAIN_ID),
+					'symbol',
+					[]
+				);
+				const owner = await httpClient.sendTxAsync(
+					process.env.NEXT_PUBLIC_CONTRACT_NAME,
+					parseInt(process.env.NEXT_PUBLIC_CHAIN_ID),
+					'ownerOf',
+					[query.id]
+				);
 
-					setTokenName(name.result);
-					setTokenSymbol(symbol.result);
-					setOwner(owner.result);
-					setTokenId(query.id);
-					setSenderAddress(user?.eth_address);
-				}
-			} catch (error) {
-				console.error(error);
+				setTokenName(name.result);
+				setTokenSymbol(symbol.result);
+				setOwner(owner.result);
+				setTokenId(query.id);
+				setSenderAddress(user?.eth_address);
 			}
-		};
+		} catch (error) {
+			console.error(error);
+		}
+	}
 
-		fetchData();
-
-		window.ethereum.on('chainChanged', fetchData);
-
-		return () => {
-			window.ethereum.removeListener('chainChanged', fetchData);
-		};
+	useEffect(() => {
+		fetchContractData();
 	}, [query.id, httpClient, user?.eth_address]);
 
 	function activateSendNFTModal() {
@@ -142,7 +136,7 @@ export default function ViewNFT({ user, httpClient }) {
 				<Form.Group
 					as={Row}
 					className="mb-3"
-					controlId="formPlaintextPassword"
+					controlId="formPlaintextImage"
 				>
 					<Form.Label column sm="2">
 						Image
@@ -155,7 +149,11 @@ export default function ViewNFT({ user, httpClient }) {
 
 			<MetisSendNFTModal
 				show={modalShow}
-				onHide={() => setModalShow(false)}
+				onHide={() => {
+					setModalShow(false);
+					// This is a poor implementation, better to implement an event listener
+					fetchContractData();
+				}}
 				httpClient={httpClient}
 				senderAddress={senderAddress}
 				tokenId={tokenId}
