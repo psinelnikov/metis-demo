@@ -52,10 +52,10 @@ export default function ViewNFT() {
 	useEffect(() => {
 		fetchContractData();
 
-		window.ethereum.on('chainChanged', fetchData);
+		window.ethereum.on('chainChanged', fetchContractData);
 
 		return () => {
-			window.ethereum.removeListener('chainChanged', fetchData);
+			window.ethereum.removeListener('chainChanged', fetchContractData);
 		};
 	}, [router.query, contract]);
 
