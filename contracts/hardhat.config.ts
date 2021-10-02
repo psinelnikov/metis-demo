@@ -23,6 +23,7 @@ module.exports = {
 			accounts: [`0x${process.env.PRIVATE_KEY}`],
 			gasPrice: 15000000,
 			ovm: true,
+			chainId: 435,
 			ignoreRxList: ['openzeppelin4/*'],
 		},
 		localmetis: {
@@ -30,6 +31,7 @@ module.exports = {
 			accounts: [`0x${process.env.PRIVATE_KEY}`],
 			gasPrice: 0,
 			ovm: true,
+			chainId: 435,
 			ignoreRxList: ['openzeppelin4/*'],
 		},
 	},

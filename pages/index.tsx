@@ -50,7 +50,7 @@ export default function Home() {
 						<a>
 							<Card>
 								<Card.Body>
-									<Card.Title>Metis ERC-721</Card.Title>
+									<Card.Title>Polis ERC-721</Card.Title>
 									<Card.Text>
 										Showcasing the creation of a simple NFT using
 										Polis
