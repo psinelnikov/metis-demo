@@ -19,11 +19,10 @@ module.exports = {
 			accounts: [`0x${process.env.PRIVATE_KEY}`],
 		},
 		metis: {
-			url: `https://rocketfuel.metis.io/?owner=435`,
+			url: `https://dragonfire.metis.io/?owner=488`,
 			accounts: [`0x${process.env.PRIVATE_KEY}`],
 			gasPrice: 15000000,
 			ovm: true,
-			chainId: 435,
 			ignoreRxList: ['openzeppelin4/*'],
 		},
 		localmetis: {
@@ -46,7 +45,7 @@ module.exports = {
 		],
 	},
 	ovm: {
-		solcVersion: '0.7.6', // Currently, we only support 0.5.16, 0.6.12, and 0.7.6 of the Solidity compiler
+		solcVersion: '0.7.6+commit.3b061308', // Currently, we only support 0.5.16, 0.6.12, and 0.7.6 of the Solidity compiler
 		optimizer: true,
 		runs: 20,
 	},

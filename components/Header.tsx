@@ -29,14 +29,14 @@ export default function Header({ user }: any) {
 						method: 'wallet_addEthereumChain',
 						params: [
 							{
-								chainId: '0x1B3',
+								chainId: '0x1E8',
 								chainName: 'Metis Dev Testnet',
 								nativeCurrency: {
 									name: 'Metis',
 									symbol: 'METIS',
 									decimals: 18,
 								},
-								rpcUrls: ['https://rocketfuel.metis.io/?owner=435'],
+								rpcUrls: ['https://dragonfire.metis.io/?owner=488'],
 							},
 						],
 					});
