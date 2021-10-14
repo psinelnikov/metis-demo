@@ -1,12 +1,21 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
-
 ## Getting Started
 
-First, run the development server:
+You need:
+
+- yarn
+- nodejs
+
+First, install the packages:
 
 ```bash
-npm run dev
-# or
+yarn install
+```
+
+Make the corresponding edits to the `example.env.local` and the `example.env` files. make sure to create an account in [Polis](https://polis.metis.io/) and follow along with [this tutorial](https://youtu.be/abQCN5ap7vw?t=1925)
+
+Next, run the development server:
+
+```bash
 yarn dev
 ```
 
