@@ -19,18 +19,12 @@ export default function Home() {
 			<Row>
 				<Col>
 					<div className="text-center">
-						<h1>Home</h1>
+						<h1>Projects</h1>
 					</div>
 				</Col>
 			</Row>
 
-			<Row>
-				<Col>
-					<h2>Projects</h2>
-				</Col>
-			</Row>
-
-			<Row xs={1} md={3}>
+			<Row xs={1} md={2}>
 				<Col className="mt-3">
 					<Link href="/projects/erc-721">
 						<a>
@@ -55,18 +49,6 @@ export default function Home() {
 										Showcasing the creation of a simple NFT using
 										Polis
 									</Card.Text>
-								</Card.Body>
-							</Card>
-						</a>
-					</Link>
-				</Col>
-				<Col className="mt-3">
-					<Link href="https://testswap.metis.io/#/faucet">
-						<a>
-							<Card>
-								<Card.Body>
-									<Card.Title>Faucet</Card.Title>
-									<Card.Text>Metis for gas purposes</Card.Text>
 								</Card.Body>
 							</Card>
 						</a>

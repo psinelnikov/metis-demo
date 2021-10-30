@@ -19,9 +19,9 @@ export default function Header({ user }: any) {
 		try {
 			await window.ethereum.request({
 				method: 'wallet_switchEthereumChain',
-				params: [{ chainId: '0x1B3' }],
+				params: [{ chainId: '0x1E8' }],
 			});
-		} catch (switchError) {
+		} catch (switchError: any) {
 			// This error code indicates that the chain has not been added to MetaMask.
 			if (switchError.code === 4902) {
 				try {
@@ -81,13 +81,6 @@ export default function Header({ user }: any) {
 									<a>
 										<NavDropdown.Item as="div">
 											Polis ERC-721
-										</NavDropdown.Item>
-									</a>
-								</Link>
-								<Link href="https://testswap.metis.io/#/faucet">
-									<a>
-										<NavDropdown.Item as="div">
-											Faucet
 										</NavDropdown.Item>
 									</a>
 								</Link>
