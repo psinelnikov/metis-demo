@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: MIT
-// @unsupported: evm
-pragma solidity ^0.7.0;
+pragma solidity ^0.8.0;
 
-import "openzeppelin3/token/ERC721/ERC721.sol";
+import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 
 contract MetisERC721 is ERC721 {
 	uint256 private _tokenIds;
+	mapping(uint256 => string) private _tokenURIs;
 
 	constructor(string memory name, string memory symbol)
 		ERC721(name, symbol)
@@ -20,6 +20,36 @@ contract MetisERC721 is ERC721 {
 
 		_tokenIds++;
 
+		return _tokenIds;
+	}
+
+	function _setTokenURI(uint256 tokenId, string memory _tokenURI)
+		internal
+		virtual
+	{
+		require(
+			_exists(tokenId),
+			"ERC721Metadata: URI set of nonexistent token"
+		);
+		_tokenURIs[tokenId] = _tokenURI;
+	}
+
+	function tokenURI(uint256 tokenId)
+		public
+		view
+		virtual
+		override
+		returns (string memory)
+	{
+		require(
+			_exists(tokenId),
+			"ERC721Metadata: URI query for nonexistent token"
+		);
+
+		return _tokenURIs[tokenId];
+	}
+
+	function totalSupply() public view returns (uint256) {
 		return _tokenIds;
 	}
 }

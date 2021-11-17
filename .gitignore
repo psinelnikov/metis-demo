@@ -17,6 +17,7 @@
 /contracts/artifacts-ovm
 /contracts/cache
 /contracts/cache-ovm
+solcInputs/
 
 # production
 /build
