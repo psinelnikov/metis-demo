@@ -1,5 +1,4 @@
 import * as dotenv from 'dotenv';
-import '@metis.io/hardhat-mvm';
 import '@nomiclabs/hardhat-waffle';
 import '@nomiclabs/hardhat-ethers';
 import 'hardhat-deploy';
@@ -19,9 +18,9 @@ module.exports = {
 			accounts: [`0x${process.env.PRIVATE_KEY}`],
 		},
 		metis: {
-			url: `https://dragonfire.metis.io/?owner=488`,
+			url: `https://stardust.metis.io/?owner=588`,
 			accounts: [`0x${process.env.PRIVATE_KEY}`],
-			gasPrice: 15000000,
+			gasPrice: 1500000000,
 			ovm: true,
 			ignoreRxList: ['openzeppelin4/*'],
 		},
