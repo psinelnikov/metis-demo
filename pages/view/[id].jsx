@@ -1,22 +1,23 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/router';
 import Form from 'react-bootstrap/Form';
 import Head from 'next/head';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Image from 'react-bootstrap/Image';
-
-import TokenMetadata from '../../../../components/TokenMetadata';
-import MetisSendNFTModal from '../../../../components/modals/MetisSendNFTModal';
-
 import Button from 'react-bootstrap/Button';
 
-export default function ViewNFT({ user, httpClient }) {
-	const { query } = useRouter();
+import TokenMetadata from '../../components/TokenMetadata';
+import SendNFTModal from '../../components/modals/SendNFTModal';
+
+import useContract from '../../services/useContract';
+
+export default function ViewNFT() {
+	const { contract, signerAddress } = useContract('ERC721');
+	const router = useRouter();
 	const [tokenId, setTokenId] = useState(-1);
 	const [tokenName, setTokenName] = useState('');
 	const [tokenSymbol, setTokenSymbol] = useState('');
-	const [senderAddress, setSenderAddress] = useState('');
 	const [name, setName] = useState('');
 	const [description, setDescription] = useState('');
 	const [owner, setOwner] = useState('');
@@ -24,54 +25,39 @@ export default function ViewNFT({ user, httpClient }) {
 
 	const [modalShow, setModalShow] = useState(false);
 
-	async function fetchContractData() {
+	const fetchContractData = useCallback(async () => {
 		try {
-			if (query.id) {
-				const value = await httpClient.sendTxAsync(
-					process.env.NEXT_PUBLIC_CONTRACT_NAME,
-					parseInt(process.env.NEXT_PUBLIC_CHAIN_ID),
-					'tokenURI',
-					[parseInt(query.id)]
-				);
-				const object = JSON.parse(value.result);
+			const { id } = router.query;
+			if (contract && id) {
+				const value = await contract.tokenURI(id);
+				const object = JSON.parse(value);
 
 				setName(object.properties.name.description);
 				setDescription(object.properties.description.description);
 				setUrl(object.properties.image.description);
 
-				const name = await httpClient.sendTxAsync(
-					process.env.NEXT_PUBLIC_CONTRACT_NAME,
-					parseInt(process.env.NEXT_PUBLIC_CHAIN_ID),
-					'name',
-					[]
-				);
-				const symbol = await httpClient.sendTxAsync(
-					process.env.NEXT_PUBLIC_CONTRACT_NAME,
-					parseInt(process.env.NEXT_PUBLIC_CHAIN_ID),
-					'symbol',
-					[]
-				);
-				const owner = await httpClient.sendTxAsync(
-					process.env.NEXT_PUBLIC_CONTRACT_NAME,
-					parseInt(process.env.NEXT_PUBLIC_CHAIN_ID),
-					'ownerOf',
-					[query.id]
-				);
+				setTokenName(await contract.name());
+				setTokenSymbol(await contract.symbol());
 
-				setTokenName(name.result);
-				setTokenSymbol(symbol.result);
-				setOwner(owner.result);
-				setTokenId(query.id);
-				setSenderAddress(user?.eth_address);
+				const owner = await contract.ownerOf(id);
+
+				setOwner(owner);
+				setTokenId(id);
 			}
 		} catch (error) {
 			console.error(error);
 		}
-	}
+	}, [contract, router.query]);
 
 	useEffect(() => {
 		fetchContractData();
-	}, [query.id, httpClient, user?.eth_address]);
+
+		window.ethereum.on('chainChanged', fetchContractData);
+
+		return () => {
+			window.ethereum.removeListener('chainChanged', fetchContractData);
+		};
+	}, [router.query, contract, fetchContractData]);
 
 	function activateSendNFTModal() {
 		setModalShow(true);
@@ -89,7 +75,7 @@ export default function ViewNFT({ user, httpClient }) {
 
 			<Row>
 				<Col>
-					{owner && senderAddress === owner && (
+					{owner && signerAddress === owner && (
 						<Button className="float-end" onClick={activateSendNFTModal}>
 							Send NFT
 						</Button>
@@ -146,16 +132,15 @@ export default function ViewNFT({ user, httpClient }) {
 					</Col>
 				</Form.Group>
 			</Form>
-
-			<MetisSendNFTModal
+			<SendNFTModal
 				show={modalShow}
 				onHide={() => {
 					setModalShow(false);
 					// This is a poor implementation, better to implement an event listener
 					fetchContractData();
 				}}
-				httpClient={httpClient}
-				senderAddress={senderAddress}
+				contract={contract}
+				senderAddress={signerAddress}
 				tokenId={tokenId}
 			/>
 		</>

@@ -8,7 +8,7 @@ import Footer from './Footer';
 export default function Layout({ user, children }: any) {
 	return (
 		<>
-			<Header user={user} />
+			<Header />
 			<main className="mb-5">
 				<Container>{children}</Container>
 			</main>

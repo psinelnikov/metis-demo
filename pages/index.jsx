@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 
 import Link from 'next/link';
 import Head from 'next/head';
@@ -7,10 +7,10 @@ import Col from 'react-bootstrap/Col';
 import Table from 'react-bootstrap/Table';
 import Button from 'react-bootstrap/Button';
 
-import TokenMetadata from '../../../components/TokenMetadata';
-import CreateNFTModal from '../../../components/modals/CreateNFTModal';
+import TokenMetadata from '../components/TokenMetadata';
+import CreateNFTModal from '../components/modals/CreateNFTModal';
 
-import useContract from '../../../services/useContract';
+import useContract from '../services/useContract';
 
 export default function ViewAllNFTs() {
 	const { contract, signerAddress } = useContract('ERC721');
@@ -19,7 +19,7 @@ export default function ViewAllNFTs() {
 	const [tokenSymbol, setTokenSymbol] = useState('');
 	const [modalShow, setModalShow] = useState(false);
 
-	async function fetchContractData() {
+	const fetchContractData = useCallback(async () => {
 		try {
 			if (contract) {
 				setTokenName(await contract.name());
@@ -46,7 +46,7 @@ export default function ViewAllNFTs() {
 		} catch (error) {
 			console.error(error);
 		}
-	}
+	}, [contract]);
 
 	useEffect(() => {
 		fetchContractData();
@@ -58,7 +58,7 @@ export default function ViewAllNFTs() {
 			window.ethereum.removeListener('accountsChanged', fetchContractData);
 			window.ethereum.removeListener('chainChanged', fetchContractData);
 		};
-	}, [contract]);
+	}, [contract, fetchContractData]);
 
 	function activateCreateNFTModal() {
 		setModalShow(true);
@@ -102,10 +102,7 @@ export default function ViewAllNFTs() {
 										{listItem.owner}
 									</td>
 									<td>
-										<Link
-											href={`erc-721/view/${listItem.tokenId}`}
-											passHref
-										>
+										<Link href={`view/${listItem.tokenId}`} passHref>
 											<Button className="float-end" size="sm">
 												View
 											</Button>
