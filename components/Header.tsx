@@ -19,7 +19,7 @@ export default function Header({ user }: any) {
 		try {
 			await window.ethereum.request({
 				method: 'wallet_switchEthereumChain',
-				params: [{ chainId: '0x1E8' }],
+				params: [{ chainId: '0x24C' }],
 			});
 		} catch (switchError: any) {
 			// This error code indicates that the chain has not been added to MetaMask.
@@ -29,14 +29,14 @@ export default function Header({ user }: any) {
 						method: 'wallet_addEthereumChain',
 						params: [
 							{
-								chainId: '0x1E8',
-								chainName: 'Metis Dev Testnet',
+								chainId: '0x24C',
+								chainName: 'Metis Stardust Testnet',
 								nativeCurrency: {
 									name: 'Metis',
-									symbol: 'METIS',
+									symbol: 'tMETIS',
 									decimals: 18,
 								},
-								rpcUrls: ['https://dragonfire.metis.io/?owner=488'],
+								rpcUrls: ['https://stardust.metis.io/?owner=588'],
 							},
 						],
 					});
