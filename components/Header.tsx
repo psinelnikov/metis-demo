@@ -27,14 +27,14 @@ export default function Header() {
 						method: 'wallet_addEthereumChain',
 						params: [
 							{
-								chainId: '0x24C',
-								chainName: 'Metis Stardust Testnet',
+								chainId: '0x257',
+								chainName: 'Metis Goerli Testnet',
 								nativeCurrency: {
-									name: 'Metis',
-									symbol: 'tMETIS',
+									name: 'Metis Goerli',
+									symbol: 'METIS',
 									decimals: 18,
 								},
-								rpcUrls: ['https://stardust.metis.io/?owner=588'],
+								rpcUrls: ['https://goerli.gateway.metisdevops.link'],
 							},
 						],
 					});
@@ -62,7 +62,7 @@ export default function Header() {
 						<Nav>
 							<Nav.Item className="px-2">
 								<Button onClick={web3Connect} variant="secondary">
-									Activate Metamask
+									Add Network
 								</Button>
 							</Nav.Item>
 						</Nav>
