@@ -46,6 +46,11 @@ export default function Header() {
 
 	return (
 		<header className="mb-5">
+			<link
+				rel="manifest"
+				href={'manifest.json'}
+				crossOrigin="use-credentials"
+			/>
 			<Navbar className="py-4" bg="dark" expand="lg" variant="dark">
 				<Container>
 					<Link href="/">

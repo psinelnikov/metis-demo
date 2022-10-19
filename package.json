@@ -7,24 +7,25 @@
 		"build": "next build",
 		"start": "next start",
 		"lint": "next lint",
-		"deploy-metis": "cd contracts && hardhat deploy --network metis --tags Metis",
-		"deploy-localmetis": "cd contracts && hardhat deploy --network localmetis --tags Metis"
+		"deploy-metis": "cd contracts && hardhat deploy --network metis --tags Metis"
 	},
 	"dependencies": {
+		"@gnosis.pm/safe-apps-provider": "^0.14.0",
+		"@gnosis.pm/safe-apps-react-sdk": "^4.6.2",
 		"@popperjs/core": "^2.9.2",
 		"axios": "^0.21.1",
 		"bootstrap": "5.0.2",
 		"ethereumjs-tx": "^2.1.2",
 		"ethers": "^5.4.4",
 		"iframe-resizer-react": "^1.1.0",
+		"local-ssl-proxy": "^1.3.0",
 		"next": "11.0.1",
 		"prettier": "^2.3.2",
 		"react": "17.0.2",
 		"react-bootstrap": "^2.0.0-beta.4",
 		"react-dom": "17.0.2",
 		"react-is": "^17.0.2",
-		"swr": "^0.5.6",
-		"web3modal": "^1.9.4"
+		"swr": "^0.5.6"
 	},
 	"devDependencies": {
 		"@ethersproject/abi": "^5.4.0",

@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { useSafeAppsSDK } from '@gnosis.pm/safe-apps-react-sdk';
+import { SafeAppProvider } from '@gnosis.pm/safe-apps-provider';
 
 import Link from 'next/link';
 import Head from 'next/head';
