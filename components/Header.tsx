@@ -17,7 +17,7 @@ export default function Header() {
 		try {
 			await window.ethereum.request({
 				method: 'wallet_switchEthereumChain',
-				params: [{ chainId: '0x24C' }],
+				params: [{ chainId: '0x257' }],
 			});
 		} catch (switchError: any) {
 			// This error code indicates that the chain has not been added to MetaMask.
