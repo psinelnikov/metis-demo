@@ -1,11 +1,8 @@
 import React from 'react';
-import { Oauth2Client } from '@metis.io/middleware-client';
-import { useRouter } from 'next/router';
 import Link from 'next/link';
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
-import NavDropdown from 'react-bootstrap/NavDropdown';
 import Button from 'react-bootstrap/Button';
 
 declare let window: any;
